@@ -1,12 +1,14 @@
+# TODO:
+# - write missing files
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl):	Serwer okresowego uruchamiania poleceñ zastepuj±cy Vixie Crona
 Name:		fcron
-Version:	2.9.4
+Version:	2.9.5
 Release:	0.1
 License:	GPL
 Group:		Daemons
-Source0:	http://fcron.free.fr/%{name}-%{version}.src.tar.gz
-# Source0-md5:	4bfcff1002a7231f374591511bacadb2
+Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
+# Source0-md5:	73042f2666dff27444789d542bbcd607
 Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
@@ -65,9 +67,12 @@ uruchamianie go w zale¿no¶ci od obci±¿enia systemu i du¿o wiêcej.
 	--with-username=crontab \
 	--with-groupname=crontab \
 	--with-pam=yes \
-	--with-selinux=yes
+	--with-selinux=yes \
+	--with-boot-install=no
 
 %{__make}
+
+echo "#!/bin/sh" > script/user-group
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -77,7 +82,13 @@ install -d $RPM_BUILD_ROOT{/var/{log,spool/cron},%{_mandir}} \
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
-	DESTMAN=$RPM_BUILD_ROOT%{_mandir}
+	DESTSBIN=$RPM_BUILD_ROOT%{_sbindir} \
+	DESTBIN=$RPM_BUILD_ROOT%{_bindir} \
+	DESTMAN=$RPM_BUILD_ROOT%{_mandir} \
+	ROOTNAME=$(id -u) \
+	ROOTGROUP=$(id -g) \
+	USERNAME=$(id -u) \
+	GROUPNAME=$(id -g)
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/crond
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/logrotate.d/cron
