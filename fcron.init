@@ -28,7 +28,8 @@ case "$1" in
 	if [ ! -f /var/lock/subsys/crond ]; then
 		msg_starting fcron 
 		[ -f /var/spool/cron/systab.orig ] && rm -rf /var/spool/cron/systab.orig
-			for FILE in /etc/cron.d/*[!~]; do
+		FIND=`find /etc/cron.d/ \( -type f ! -name '*~' ! -name \*\.rpmnew ! -name \*\.rpmsave \)`
+			for FILE in $FIND; do
 				cat $FILE >>/var/spool/cron/systab.orig
 			done
 		fcrontab -u systab -z > /dev/null 2>&1
@@ -51,7 +52,7 @@ case "$1" in
 																	
 	;;
   status)
-	status fcron
+	status crond
 	exit $?
 	;;
   restart|force-reload)
