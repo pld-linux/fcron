@@ -1,0 +1,7 @@
+[ -f /var/spool/cron/systab.orig ] && rm -rf /var/spool/cron/systab.orig
+	FIND=`find /etc/cron.d/ \( -type f ! -name '*~' ! -name \*\.swp \
+    		! -name \*\.rpmorig ! -name \*\.rpmnew ! -name \*\.rpmsave \)`
+		for FILE in $FIND; do
+			cat $FILE >>/var/spool/cron/systab.orig
+		done
+	fcrontab -u systab -z > /dev/null 2>&1
