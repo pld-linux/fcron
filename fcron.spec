@@ -162,7 +162,8 @@ fi
 %post
 if [ "$1" = "1" ]; then
 	if [ -d /var/spool/cron ]; then
-		for FILE in /var/spool/cron/*; do
+		FILE=`find /var/spool/cron -type f`
+		for FILE in $FILE; do
 			mv -f $FILE $FILE.orig
 			USER=`basename $FILE`
 			chown crontab:crontab $FILE.orig
