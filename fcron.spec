@@ -150,15 +150,24 @@ fi
 
 %post
 if [ "$1" = "1" ]; then
-if [ -d /var/spool/cron ]; then
-for FILE in /var/spool/cron/*; do
-	mv -f $FILE $FILE.orig
-	BASENAME=`basename $FILE`
-	FCRONTAB=`echo "$BASENAME"`
-	(test ! -z "$FCRONTAB" && fcrontab -u $FCRONTAB -z) > /dev/null 2>&1
-done
+	if [ -d /var/spool/cron ]; then
+		for FILE in /var/spool/cron/*; do
+			mv -f $FILE $FILE.orig
+			BASENAME=`basename $FILE`
+			FCRONTAB=`echo "$BASENAME"`
+			(test ! -z "$FCRONTAB" && fcrontab -u $FCRONTAB -z) > /dev/null 2>&1
+		done
+	fi
+
 fi
-%{_bindir}/fcrontab /etc/cron.d/crontab -u systab > /dev/null 2>&1
+
+
+if [ "$1" = "2" ]; then
+	for FILE in /var/spool/cron/*.orig; do
+		BASENAME=`basename $FILE`
+		FCRONTAB=`echo "$BASENAME"| sed 's/.orig//'`
+		(test ! -z "$FCRONTAB" && fcrontab -u $FCRONTAB -z) > /dev/null 2>&1
+	done
 fi
 
 /sbin/chkconfig --add crond
