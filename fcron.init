@@ -32,7 +32,7 @@ case "$1" in
 				cat $FILE >>/var/spool/cron/systab.orig
 			done
 		fcrontab -u systab -z > /dev/null 2>&1
-		daemon /usr/sbin/fcron -b -c /etc/fcron.conf
+		daemon /usr/sbin/crond -b -c /etc/fcron.conf
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/crond
 		else
@@ -43,7 +43,7 @@ case "$1" in
 	# Stop daemons.
 	if [ -f /var/lock/subsys/crond ]; then
 		msg_stopping fcron
-		killproc fcron
+		killproc crond
 		rm -f /var/lock/subsys/crond >/dev/null 2>&1
 	else
 		msg_not_running fcron
