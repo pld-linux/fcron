@@ -59,6 +59,7 @@ uruchamianie go w zale¿no¶ci od obci±¿enia systemu i du¿o wiêcej.
 
 %build
 %configure \
+	--with-sysfcrontab=/etc/cron.d/crontab \
 	--with-spooldir=%{_var}/spool/cron \
 	--with-run-non-privileged=no \
 	--with-boot-install=no \
