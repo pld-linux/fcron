@@ -14,8 +14,10 @@ Source2:	cron.logrotate
 Source3:	cron.sysconfig
 Source4:	%{name}.crontab
 Source5:	%{name}.pam
+Source6:	%{name}.conf
+Source7:	fcrontab.pam	
 URL:		http://fcron.free.fr/
-BuildRequires:	libselinux-devel
+#BuildRequires:	libselinux-devel
 BuildRequires:	pam-devel
 BuildRequires:	rpmbuild(macros) >= 1.159
 PreReq:		rc-scripts
@@ -64,10 +66,10 @@ uruchamianie go w zale¿no¶ci od obci±¿enia systemu i du¿o wiêcej.
 	--with-run-non-privileged=no \
 	--with-boot-install=no \
 	--with-fcrondyn=yes \
-	--with-username=crontab \
+	--with-username=root \
 	--with-groupname=crontab \
 	--with-pam=yes \
-	--with-selinux=yes \
+	--with-selinux=no \
 	--with-boot-install=no
 
 %{__make}
@@ -90,27 +92,34 @@ install -d $RPM_BUILD_ROOT{/var/{log,spool/cron},%{_mandir}} \
 	USERNAME=$(id -u) \
 	GROUPNAME=$(id -g)
 
+#ln -sf %{_bindir}/fcrontab $RPM_BUILD_ROOT%{_bindir}/crontab
+
+#fix premission for rpmbuild
+chmod +rw $RPM_BUILD_ROOT/usr/*bin/*
+
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/crond
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/logrotate.d/cron
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/cron
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/cron.d/crontab
-install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/cron
+install %{SOURCE5} $RPM_BUILD_ROOT/etc/pam.d/fcron
+install %{SOURCE6} $RPM_BUILD_ROOT/etc/fcron.conf
+install %{SOURCE7} $RPM_BUILD_ROOT/etc/pam.d/fcrontab
 
-for a in fi fr id ja ko pl ; do
-	if test -f $a/man1/crontab.1 ; then
-		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man1
-		install $a/man1/crontab.1 $RPM_BUILD_ROOT%{_mandir}/$a/man1
-	fi
-	if test -f $a/man5/crontab.5 ; then
-		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man5
-		install $a/man5/crontab.5 $RPM_BUILD_ROOT%{_mandir}/$a/man5
-	fi
-	if test -f $a/man8/cron.8 ; then
-		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man8
-		install $a/man8/cron.8 $RPM_BUILD_ROOT%{_mandir}/$a/man8
-		echo .so cron.8 > $RPM_BUILD_ROOT%{_mandir}/$a/man8/crond.8
-	fi
-done
+#for a in fi fr id ja ko pl ; do
+#	if test -f $a/man1/crontab.1 ; then
+#		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man1
+#		install $a/man1/crontab.1 $RPM_BUILD_ROOT%{_mandir}/$a/man1
+#	fi
+#	if test -f $a/man5/crontab.5 ; then
+#		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man5
+#		install $a/man5/crontab.5 $RPM_BUILD_ROOT%{_mandir}/$a/man5
+#	fi
+#	if test -f $a/man8/cron.8 ; then
+#		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man8
+#		install $a/man8/cron.8 $RPM_BUILD_ROOT%{_mandir}/$a/man8
+#		echo .so cron.8 > $RPM_BUILD_ROOT%{_mandir}/$a/man8/crond.8
+#	fi
+#done
 
 touch $RPM_BUILD_ROOT/var/log/cron
 
@@ -140,6 +149,13 @@ else
 fi
 
 %post
+for FILE in /var/spool/cron/*; do
+                mv -f $FILE $FILE.orig
+                BASENAME=`basename $FILE`
+                FCRONTAB=`echo "$BASENAME"`
+                (test ! -z "$FCRONTAB" && fcrontab -u $FCRONTAB -z) > /dev/null 2>&1
+done
+
 /sbin/chkconfig --add crond
 if [ -f /var/lock/subsys/crond ]; then
 	/etc/rc.d/init.d/crond restart >&2
@@ -158,6 +174,11 @@ if [ "$1" = "0" ]; then
 	fi
 	/sbin/chkconfig --del crond
 fi
+
+for FILE in /var/spool/cron/*.orig; do
+                BASENAME=`basename $FILE`
+                mv -f $FILE /var/spool/cron/`echo "$BASENAME"| sed 's/.orig//'` >/dev/null 2>&1
+done
 
 %postun
 if [ "$1" = "0" ]; then
@@ -212,25 +233,29 @@ done
 
 %files
 %defattr(644,root,root,755)
-%doc CHANGES CONVERSION FEATURES MAIL README THANKS
+#%%doc CHANGES CONVERSION FEATURES MAIL README THANKS
 %attr(0750,root,crontab) %dir %{_sysconfdir}/cron*
 %attr(0644,root,crontab) %config(noreplace) /etc/cron.d/crontab
 %attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
 %attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
 %attr(0640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
-%config(noreplace) %verify(not md5 size mtime) /etc/pam.d/cron
+%config(noreplace) %verify(not md5 size mtime) /etc/pam.d/fcron
+%config(noreplace) %verify(not md5 size mtime) /etc/pam.d/fcrontab
 %attr(0754,root,root) /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
-%attr(0755,root,root) %{_sbindir}/crond
-%attr(2755,root,crontab) %{_bindir}/crontab
+%attr(0640,root,root) %config(noreplace) /etc/fcron.conf
+%attr(0755,root,root) %{_sbindir}/fcron
+%attr(4755,root,crontab) %{_bindir}/fcrontab
+%attr(0755,root,crontab) %{_bindir}/fcronsighup
+%attr(0755,root,crontab) %{_bindir}/fcrondyn
 
 %{_mandir}/man*/*
-%lang(fi) %{_mandir}/fi/man*/*
-%lang(fr) %{_mandir}/fr/man*/*
-%lang(id) %{_mandir}/id/man*/*
-%lang(ja) %{_mandir}/ja/man*/*
-%lang(ko) %{_mandir}/ko/man*/*
-%lang(pl) %{_mandir}/pl/man*/*
+#%%lang(fi) %{_mandir}/fi/man*/*
+#%%lang(fr) %{_mandir}/fr/man*/*
+#%%lang(id) %{_mandir}/id/man*/*
+#%%lang(ja) %{_mandir}/ja/man*/*
+#%%lang(ko) %{_mandir}/ko/man*/*
+#%%lang(pl) %{_mandir}/pl/man*/*
 
 %attr(1730,root,crontab) /var/spool/cron
 %attr(0660,root,crontab) %ghost /var/log/cron
