@@ -4,7 +4,7 @@ Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl):	Serwer okresowego uruchamiania poleceñ zastepuj±cy Vixie Crona
 Name:		fcron
 Version:	2.9.5
-Release:	0.1
+Release:	0.2
 License:	GPL
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
@@ -66,7 +66,7 @@ uruchamianie go w zale¿no¶ci od obci±¿enia systemu i du¿o wiêcej.
 	--with-run-non-privileged=no \
 	--with-boot-install=no \
 	--with-fcrondyn=yes \
-	--with-username=root \
+	--with-username=crontab \
 	--with-groupname=crontab \
 	--with-pam=yes \
 	--with-selinux=no \
@@ -149,12 +149,17 @@ else
 fi
 
 %post
+if [ "$1" = "1" ]; then
+if [ -d /var/spool/cron ]; then
 for FILE in /var/spool/cron/*; do
-                mv -f $FILE $FILE.orig
-                BASENAME=`basename $FILE`
-                FCRONTAB=`echo "$BASENAME"`
-                (test ! -z "$FCRONTAB" && fcrontab -u $FCRONTAB -z) > /dev/null 2>&1
+	mv -f $FILE $FILE.orig
+	BASENAME=`basename $FILE`
+	FCRONTAB=`echo "$BASENAME"`
+	(test ! -z "$FCRONTAB" && fcrontab -u $FCRONTAB -z) > /dev/null 2>&1
 done
+fi
+%{_bindir}/fcrontab /etc/cron.d/crontab -u systab > /dev/null 2>&1
+fi
 
 /sbin/chkconfig --add crond
 if [ -f /var/lock/subsys/crond ]; then
@@ -162,6 +167,7 @@ if [ -f /var/lock/subsys/crond ]; then
 else
 	echo "Run \"/etc/rc.d/init.d/crond start\" to start cron daemon."
 fi
+
 umask 027
 touch /var/log/cron
 chgrp crontab /var/log/cron
@@ -173,12 +179,13 @@ if [ "$1" = "0" ]; then
 		/etc/rc.d/init.d/crond stop >&2
 	fi
 	/sbin/chkconfig --del crond
-fi
 
 for FILE in /var/spool/cron/*.orig; do
-                BASENAME=`basename $FILE`
-                mv -f $FILE /var/spool/cron/`echo "$BASENAME"| sed 's/.orig//'` >/dev/null 2>&1
+	BASENAME=`basename $FILE`
+	mv -f $FILE /var/spool/cron/`echo "$BASENAME"| sed 's/.orig//'` >/dev/null 2>&1
 done
+rm -f /var/spool/cron/systab
+fi
 
 %postun
 if [ "$1" = "0" ]; then
@@ -239,15 +246,15 @@ done
 %attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
 %attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
 %attr(0640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
-%config(noreplace) %verify(not md5 size mtime) /etc/pam.d/fcron
-%config(noreplace) %verify(not md5 size mtime) /etc/pam.d/fcrontab
+%attr(0644,root,crontab) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/fcron
+%attr(0644,root,crontab) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/fcrontab
 %attr(0754,root,root) /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
-%attr(0640,root,root) %config(noreplace) /etc/fcron.conf
+%attr(0640,root,crontab) %config(noreplace) /etc/fcron.conf
 %attr(0755,root,root) %{_sbindir}/fcron
-%attr(4755,root,crontab) %{_bindir}/fcrontab
-%attr(0755,root,crontab) %{_bindir}/fcronsighup
-%attr(0755,root,crontab) %{_bindir}/fcrondyn
+%attr(6111,crontab,crontab) %{_bindir}/fcrontab
+%attr(4711,root,root) %{_bindir}/fcronsighup
+%attr(6111,crontab,crontab) %{_bindir}/fcrondyn
 
 %{_mandir}/man*/*
 #%%lang(fi) %{_mandir}/fi/man*/*
