@@ -164,13 +164,13 @@ if [ "$1" = "1" ]; then
 		for FILE in /var/spool/cron/*; do
 			mv -f $FILE $FILE.orig
 			USER=`basename $FILE`
-			chown crontab.crontab $FILE.orig
+			chown crontab:crontab $FILE.orig
 			chmod 640 $FILE.orig
 			(test ! -z "$USER" && fcrontab -u $USER -z) > /dev/null 2>&1
 		done
 		if [ -f /var/spool/cron/root.orig ]; then
 			chmod 600 /var/spool/cron/root.orig
-			chown root.root /var/spool/cron/root.orig
+			chown root:root /var/spool/cron/root.orig
 		fi
 	fi
 fi
@@ -179,7 +179,7 @@ if [ "$1" = "2" ]; then
 	for FILE in /var/spool/cron/*.orig; do
 		BASENAME=`basename $FILE`
 		USER=`echo "$BASENAME"| sed 's/.orig//'`
-		(test ! -z "$USER" && fcrontab -u $USER -z) > /dev/null 2>&1
+		[ ! -z "$USER" ] && fcrontab -u $USER -z > /dev/null 2>&1
 	done
 fi
 
@@ -207,7 +207,7 @@ for FILE in /var/spool/cron/*.orig; do
 	BASENAME=`basename $FILE`
 	USER="`echo "$BASENAME"| sed 's/.orig//'`"
 	mv -f $FILE /var/spool/cron/$USER >/dev/null 2>&1
-	chown $USER.crontab /var/spool/cron/$USER >/dev/null 2>&1
+	chown $USER:crontab /var/spool/cron/$USER >/dev/null 2>&1
 	chmod 600 /var/spool/cron/$USER >/dev/null 2>&1
 done
 fi
