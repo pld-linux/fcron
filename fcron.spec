@@ -30,7 +30,6 @@ Provides:	crontabs >= 1.7
 Provides:	crondaemon
 Provides:	group(crontab)
 Obsoletes:	crontabs
-Obsoletes:	crondaemon
 Obsoletes:	hc-cron
 Obsoletes:	mcron
 Obsoletes:	vixie-cron
