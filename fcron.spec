@@ -1,11 +1,11 @@
 # TODO:
 # - added support for selinux
-# - rewrite and correct %post, %pre
+# - check %post, %pre
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl):	Serwer okresowego uruchamiania poleceñ zastepuj±cy Vixie Crona
 Name:		fcron
 Version:	2.9.5
-Release:	0.3
+Release:	0.4
 License:	GPL
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
@@ -177,7 +177,8 @@ if [ "$1" = "1" ]; then
 fi
 
 if [ "$1" = "2" ]; then
-	for FILE in /var/spool/cron/*.orig; do
+	FILE=`find /var/spool/cron -name \*.orig`
+	for FILE in $FILE; do
 		BASENAME=`basename $FILE`
 		USER=`echo "$BASENAME"| sed 's/.orig//'`
 		[ ! -z "$USER" ] && fcrontab -u $USER -z > /dev/null 2>&1
@@ -204,13 +205,17 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del crond
 
 rm -f /var/spool/cron/systab*
-for FILE in /var/spool/cron/*.orig; do
+
+FILE=`find /var/spool/cron -name \*.orig`
+for FILE in $FILE; do
 	BASENAME=`basename $FILE`
 	USER="`echo "$BASENAME"| sed 's/.orig//'`"
 	mv -f $FILE /var/spool/cron/$USER >/dev/null 2>&1
 	chown $USER:crontab /var/spool/cron/$USER >/dev/null 2>&1
 	chmod 600 /var/spool/cron/$USER >/dev/null 2>&1
 done
+rm -rf /var/spool/cron/rm.*
+rm -rf /var/spool/cron/fcrontab.sig
 fi
 
 %postun
