@@ -27,6 +27,11 @@ case "$1" in
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/crond ]; then
 		msg_starting fcron 
+		[ -f /var/spool/cron/systab.orig ] && rm -rf /var/spool/cron/systab.orig
+			for FILE in /etc/cron.d/*[!~]; do
+				cat $FILE >>/var/spool/cron/systab.orig
+			done
+		fcrontab -u systab -z > /dev/null 2>&1
 		daemon /usr/sbin/fcron -b -c /etc/fcron.conf
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/crond
