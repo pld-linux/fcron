@@ -1,10 +1,10 @@
 # TODO:
-# - write missing files
+# - added support for selinux
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl):	Serwer okresowego uruchamiania poleceñ zastepuj±cy Vixie Crona
 Name:		fcron
 Version:	2.9.5
-Release:	0.2
+Release:	0.3
 License:	GPL
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
@@ -92,7 +92,8 @@ install -d $RPM_BUILD_ROOT{/var/{log,spool/cron},%{_mandir}} \
 	USERNAME=$(id -u) \
 	GROUPNAME=$(id -g)
 
-#ln -sf %{_bindir}/fcrontab $RPM_BUILD_ROOT%{_bindir}/crontab
+ln -sf %{_bindir}/fcrontab $RPM_BUILD_ROOT%{_bindir}/crontab
+mv -f $RPM_BUILD_ROOT%{_sbindir}/fcron $RPM_BUILD_ROOT%{_sbindir}/crond
 
 #fix premission for rpmbuild
 chmod +rw $RPM_BUILD_ROOT/usr/*bin/*
@@ -148,25 +149,37 @@ else
 	/usr/sbin/groupadd -g 117 -r -f crontab
 fi
 
+if [ -n "`/bin/id -u crontab 2>/dev/null`" ]; then
+	if [ "`/bin/id -u crontab`" != "134" ]; then
+		echo "Error: user crontab doesn't have uid=134. Correct this before installing %{name}." 1>&2
+		exit 1
+	fi
+else
+        /usr/sbin/useradd -u 134 -r -d /var/spool/cron -s /bin/false -c "crontab User" -g crontab crontab 1>&2
+fi
+
 %post
 if [ "$1" = "1" ]; then
 	if [ -d /var/spool/cron ]; then
 		for FILE in /var/spool/cron/*; do
 			mv -f $FILE $FILE.orig
-			BASENAME=`basename $FILE`
-			FCRONTAB=`echo "$BASENAME"`
-			(test ! -z "$FCRONTAB" && fcrontab -u $FCRONTAB -z) > /dev/null 2>&1
+			USER=`basename $FILE`
+			chown crontab.crontab $FILE.orig
+			chmod 640 $FILE.orig
+			(test ! -z "$USER" && fcrontab -u $USER -z) > /dev/null 2>&1
 		done
+		if [ -f /var/spool/cron/root.orig ]; then
+			chmod 600 /var/spool/cron/root.orig
+			chown root.root /var/spool/cron/root.orig
+		fi
 	fi
-
 fi
-
 
 if [ "$1" = "2" ]; then
 	for FILE in /var/spool/cron/*.orig; do
 		BASENAME=`basename $FILE`
-		FCRONTAB=`echo "$BASENAME"| sed 's/.orig//'`
-		(test ! -z "$FCRONTAB" && fcrontab -u $FCRONTAB -z) > /dev/null 2>&1
+		USER=`echo "$BASENAME"| sed 's/.orig//'`
+		(test ! -z "$USER" && fcrontab -u $USER -z) > /dev/null 2>&1
 	done
 fi
 
@@ -189,16 +202,20 @@ if [ "$1" = "0" ]; then
 	fi
 	/sbin/chkconfig --del crond
 
+rm -f /var/spool/cron/systab*
 for FILE in /var/spool/cron/*.orig; do
 	BASENAME=`basename $FILE`
-	mv -f $FILE /var/spool/cron/`echo "$BASENAME"| sed 's/.orig//'` >/dev/null 2>&1
+	USER="`echo "$BASENAME"| sed 's/.orig//'`"
+	mv -f $FILE /var/spool/cron/$USER >/dev/null 2>&1
+	chown $USER.crontab /var/spool/cron/$USER >/dev/null 2>&1
+	chmod 600 /var/spool/cron/$USER >/dev/null 2>&1
 done
-rm -f /var/spool/cron/systab
 fi
 
 %postun
 if [ "$1" = "0" ]; then
 	%groupremove crontab
+	%userremove crontab
 fi
 
 %triggerpostun -- vixie-cron <= 3.0.1-85
@@ -260,8 +277,9 @@ done
 %attr(0754,root,root) /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
 %attr(0640,root,crontab) %config(noreplace) /etc/fcron.conf
-%attr(0755,root,root) %{_sbindir}/fcron
+%attr(0755,root,root) %{_sbindir}/crond
 %attr(6111,crontab,crontab) %{_bindir}/fcrontab
+%attr(6111,crontab,crontab) %{_bindir}/crontab
 %attr(4711,root,root) %{_bindir}/fcronsighup
 %attr(6111,crontab,crontab) %{_bindir}/fcrondyn
 
