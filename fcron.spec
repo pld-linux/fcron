@@ -2,7 +2,7 @@ Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl):	Serwer okresowego uruchamiania poleceñ zastêpuj±cy Vixie Crona
 Name:		fcron
 Version:	2.9.5.1
-Release:	0.2
+Release:	1
 License:	GPL
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
@@ -15,6 +15,7 @@ Source5:	%{name}.pam
 Source6:	%{name}.conf
 Source7:	fcrontab.pam	
 Source8:	%{name}.systab
+Patch0:		%{name}-mail_output_only_if_there_is_output.patch
 URL:		http://fcron.free.fr/
 BuildRequires:	libselinux-devel
 BuildRequires:	pam-devel
@@ -57,6 +58,7 @@ uruchamianie go w zale¿no¶ci od obci±¿enia systemu i du¿o wiêcej.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %configure \
