@@ -1,4 +1,5 @@
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
+Summary(pl):	Serwer okresowego uruchamiania poleceñ zastepuj±cy Vixie Crona
 Name:		fcron
 Version:	2.9.4
 Release:	1
@@ -31,11 +32,22 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 Fcron is a periodical command scheduler which aims at replacing Vixie
 Cron, so it implements most of its functionalities. But fcron does not
-assume that your system is running neither all the time nor regularly
-: you can, for instance, tell fcron to execute tasks every x hours y
+assume that your system is running neither all the time nor regularly:
+you can, for instance, tell fcron to execute tasks every x hours y
 minutes of system up time or to do a job only once in a specified
 interval of time. You can also set a nice value to a job, run it
 depending on the system load average and much more !
+
+%description -l pl
+
+Fcron jest serwerem okresowego uruchamiania poleceñ maj±cym za cel
+zast±pienie Vixie Crona, posiadaj±cym zaimplementowane wiêkszo¶æ
+spo¶ród jego funkcji. Jednak¿e fcron nie zak³ada, ¿e system dzia³a
+ca³y czas, ani ¿e jest uruchamiany regularnie: mo¿na, na przyk³ad,
+kazaæ fcronowi uruchamiaæ zadanie co ka¿de x godzin y minut od
+uruchomienia systemu lub wykonywaæ zadanie dok³adnie raz w podanym
+okresie czasu. Umo¿liwia równie¿ ustawianie warto¶ci nice dla zadania,
+uruchamianie go w zale¿no¶ci od obci±¿enia systemu i du¿o wiêcej.
 
 %prep
 %setup -q
