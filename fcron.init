@@ -1,0 +1,62 @@
+#!/bin/sh
+#
+# crond		Start/Stop the cron clock daemon.
+#
+# chkconfig:	2345 40 60
+#
+# description:	cron is a standard UNIX program that runs user-specified \
+#		programs at periodic scheduled times. hc-cron adds a number \
+#		of features to the basic UNIX cron, including better security \
+#		and more powerful configuration options.
+#
+# processname:	crond
+# config:	/etc/fcron.conf
+# pidfile:	/var/run/fcron.pid
+
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+# Get service config
+[ -f /etc/sysconfig/cron ] && . /etc/sysconfig/cron
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/crond ]; then
+		msg_starting fcron 
+		daemon /usr/sbin/fcron -b -c /etc/fcron.conf
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/crond
+		else
+		msg_already_running fcron
+	fi
+	;;
+  stop)
+	# Stop daemons.
+	if [ -f /var/lock/subsys/crond ]; then
+		msg_stopping fcron
+		killproc fcron
+		rm -f /var/lock/subsys/crond >/dev/null 2>&1
+	else
+		msg_not_running fcron
+	fi
+																	
+	;;
+  status)
+	status fcron
+	exit $?
+	;;
+  restart|force-reload)
+	$0 stop
+	$0 start
+	exit $?
+	;;
+  *)
+	msg_usage "$0 {start|stop|restart|force-reload|status}"
+	exit 3
+esac
+
+exit $RETVAL
