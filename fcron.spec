@@ -12,6 +12,9 @@ Source2:	cron.logrotate
 Source3:	cron.sysconfig
 Source4:	%{name}.crontab
 Source5:	%{name}.pam
+URL:		http://fcron.free.fr/
+BuildRequires:	libselinux-devel
+BuildRequires:	pam-devel
 PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -25,8 +28,6 @@ Provides:	crondaemon
 Obsoletes:	crontabs
 Obsoletes:	crondaemon
 Obsoletes:	hc-cron
-BuildRequires:	pam-devel
-BuildRequires:	libselinux-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -39,7 +40,6 @@ interval of time. You can also set a nice value to a job, run it
 depending on the system load average and much more !
 
 %description -l pl
-
 Fcron jest serwerem okresowego uruchamiania poleceñ maj±cym za cel
 zast±pienie Vixie Crona, posiadaj±cym zaimplementowane wiêkszo¶æ
 spo¶ród jego funkcji. Jednak¿e fcron nie zak³ada, ¿e system dzia³a
@@ -62,7 +62,7 @@ uruchamianie go w zale¿no¶ci od obci±¿enia systemu i du¿o wiêcej.
 	--with-groupname=crontab \
 	--with-pam=yes \
 	--with-selinux=yes
-	
+
 %{__make}
 
 %install
