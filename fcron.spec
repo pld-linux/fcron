@@ -2,7 +2,7 @@ Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl):	Serwer okresowego uruchamiania poleceñ zastepuj±cy Vixie Crona
 Name:		fcron
 Version:	2.9.4
-Release:	1
+Release:	0.1
 License:	GPL
 Group:		Daemons
 Source0:	http://fcron.free.fr/%{name}-%{version}.src.tar.gz
