@@ -2,7 +2,7 @@ Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl):	Serwer okresowego uruchamiania poleceñ zastêpuj±cy Vixie Crona
 Name:		fcron
 Version:	2.9.5.1
-Release:	0.1
+Release:	0.2
 License:	GPL
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
@@ -14,6 +14,7 @@ Source4:	%{name}.crontab
 Source5:	%{name}.pam
 Source6:	%{name}.conf
 Source7:	fcrontab.pam	
+Source8:	%{name}.systab
 URL:		http://fcron.free.fr/
 BuildRequires:	libselinux-devel
 BuildRequires:	pam-devel
@@ -70,7 +71,7 @@ uruchamianie go w zale¿no¶ci od obci±¿enia systemu i du¿o wiêcej.
 	--with-selinux=yes \
 	--with-boot-install=no
 
-%{__make}
+%{__make} OPTION="%{rpmcflags}"
 
 echo "#!/bin/sh" > script/user-group
 
@@ -103,6 +104,7 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/cron.d/crontab
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/pam.d/fcron
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/fcron.conf
 install %{SOURCE7} $RPM_BUILD_ROOT/etc/pam.d/fcrontab
+install %{SOURCE8} $RPM_BUILD_ROOT/etc/cron.hourly/fcron.systab
 
 touch $RPM_BUILD_ROOT/var/log/cron
 
@@ -257,6 +259,7 @@ done
 %defattr(644,root,root,755)
 %doc  doc/HTML doc/olddoc/{FAQ,CHANGES,README,THANKS,TODO}
 %attr(0750,root,crontab) %dir %{_sysconfdir}/cron*
+%attr(0750,root,root) %{_sysconfdir}/cron.hourly/%{name}.systab
 %attr(0640,root,crontab) %config(noreplace) /etc/cron.d/crontab
 %attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
 %attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
