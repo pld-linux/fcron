@@ -4,14 +4,12 @@
 #
 # chkconfig:	2345 40 60
 #
-# description:	cron is a standard UNIX program that runs user-specified \
-#		programs at periodic scheduled times. hc-cron adds a number \
-#		of features to the basic UNIX cron, including better security \
-#		and more powerful configuration options.
+# description:	Fcron is a periodical command scheduler which aims at replacing \
+#		Vixie Cron, so it implements most of its functionalities.
 #
 # processname:	crond
 # config:	/etc/fcron.conf
-# pidfile:	/var/run/fcron.pid
+# pidfile:	/var/run/crond.pid
 
 
 # Source function library
@@ -28,7 +26,8 @@ case "$1" in
 	if [ ! -f /var/lock/subsys/crond ]; then
 		msg_starting fcron 
 		[ -f /var/spool/cron/systab.orig ] && rm -rf /var/spool/cron/systab.orig
-		FIND=`find /etc/cron.d/ \( -type f ! -name '*~' ! -name \*\.rpmnew ! -name \*\.rpmsave \)`
+		FIND=`find /etc/cron.d/ \( -type f ! -name '*~' ! -name \*\.swp \
+		      ! -name \*\.rpmorig ! -name \*\.rpmnew ! -name \*\.rpmsave \)`
 			for FILE in $FIND; do
 				cat $FILE >>/var/spool/cron/systab.orig
 			done
