@@ -1,5 +1,6 @@
 # TODO:
 # - added support for selinux
+# - rewrite and correct %post, %pre
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl):	Serwer okresowego uruchamiania poleceñ zastepuj±cy Vixie Crona
 Name:		fcron
@@ -92,11 +93,11 @@ install -d $RPM_BUILD_ROOT{/var/{log,spool/cron},%{_mandir}} \
 	USERNAME=$(id -u) \
 	GROUPNAME=$(id -g)
 
-ln -sf %{_bindir}/fcrontab $RPM_BUILD_ROOT%{_bindir}/crontab
-mv -f $RPM_BUILD_ROOT%{_sbindir}/fcron $RPM_BUILD_ROOT%{_sbindir}/crond
-
 #fix premission for rpmbuild
 chmod +rw $RPM_BUILD_ROOT/usr/*bin/*
+
+ln -sf %{_bindir}/fcrontab $RPM_BUILD_ROOT%{_bindir}/crontab
+mv -f $RPM_BUILD_ROOT%{_sbindir}/fcron $RPM_BUILD_ROOT%{_sbindir}/crond
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/crond
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/logrotate.d/cron
@@ -214,8 +215,8 @@ fi
 
 %postun
 if [ "$1" = "0" ]; then
-	%groupremove crontab
 	%userremove crontab
+	%groupremove crontab
 fi
 
 %triggerpostun -- vixie-cron <= 3.0.1-85
