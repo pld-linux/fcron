@@ -1,4 +1,4 @@
 # Customized setings for cron
 
-# Define nice level for cron 
+# Define nice level for cron
 SERVICE_RUN_NICE_LEVEL="+0"
