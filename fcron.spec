@@ -233,7 +233,7 @@ done
 
 %files
 %defattr(644,root,root,755)
-#%%doc CHANGES CONVERSION FEATURES MAIL README THANKS
+%doc  doc/HTML doc/olddoc/{FAQ,CHANGES,README,THANKS,TODO}
 %attr(0750,root,crontab) %dir %{_sysconfdir}/cron*
 %attr(0644,root,crontab) %config(noreplace) /etc/cron.d/crontab
 %attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
