@@ -1,11 +1,8 @@
-# TODO:
-# - added support for selinux
-# - check %post, %pre
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl):	Serwer okresowego uruchamiania poleceñ zastepuj±cy Vixie Crona
 Name:		fcron
 Version:	2.9.5
-Release:	0.4
+Release:	0.5
 License:	GPL
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
@@ -18,7 +15,7 @@ Source5:	%{name}.pam
 Source6:	%{name}.conf
 Source7:	fcrontab.pam	
 URL:		http://fcron.free.fr/
-#BuildRequires:	libselinux-devel
+BuildRequires:	libselinux-devel
 BuildRequires:	pam-devel
 BuildRequires:	rpmbuild(macros) >= 1.159
 PreReq:		rc-scripts
@@ -70,7 +67,7 @@ uruchamianie go w zale¿no¶ci od obci±¿enia systemu i du¿o wiêcej.
 	--with-username=crontab \
 	--with-groupname=crontab \
 	--with-pam=yes \
-	--with-selinux=no \
+	--with-selinux=yes \
 	--with-boot-install=no
 
 %{__make}
@@ -106,22 +103,6 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/cron.d/crontab
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/pam.d/fcron
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/fcron.conf
 install %{SOURCE7} $RPM_BUILD_ROOT/etc/pam.d/fcrontab
-
-#for a in fi fr id ja ko pl ; do
-#	if test -f $a/man1/crontab.1 ; then
-#		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man1
-#		install $a/man1/crontab.1 $RPM_BUILD_ROOT%{_mandir}/$a/man1
-#	fi
-#	if test -f $a/man5/crontab.5 ; then
-#		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man5
-#		install $a/man5/crontab.5 $RPM_BUILD_ROOT%{_mandir}/$a/man5
-#	fi
-#	if test -f $a/man8/cron.8 ; then
-#		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man8
-#		install $a/man8/cron.8 $RPM_BUILD_ROOT%{_mandir}/$a/man8
-#		echo .so cron.8 > $RPM_BUILD_ROOT%{_mandir}/$a/man8/crond.8
-#	fi
-#done
 
 touch $RPM_BUILD_ROOT/var/log/cron
 
@@ -162,8 +143,8 @@ fi
 %post
 if [ "$1" = "1" ]; then
 	if [ -d /var/spool/cron ]; then
-		FILE=`find /var/spool/cron -type f`
-		for FILE in $FILE; do
+		FIND=`find /var/spool/cron -type f`
+		for FILE in $FIND; do
 			mv -f $FILE $FILE.orig
 			USER=`basename $FILE`
 			chown crontab:crontab $FILE.orig
@@ -178,8 +159,8 @@ if [ "$1" = "1" ]; then
 fi
 
 if [ "$1" = "2" ]; then
-	FILE=`find /var/spool/cron -name \*.orig`
-	for FILE in $FILE; do
+	FIND=`find /var/spool/cron -name \*.orig`
+	for FILE in $FIND; do
 		BASENAME=`basename $FILE`
 		USER=`echo "$BASENAME"| sed 's/.orig//'`
 		[ ! -z "$USER" ] && fcrontab -u $USER -z > /dev/null 2>&1
@@ -207,16 +188,17 @@ if [ "$1" = "0" ]; then
 
 rm -f /var/spool/cron/systab*
 
-FILE=`find /var/spool/cron -name \*.orig`
-for FILE in $FILE; do
+FIND=`find /var/spool/cron -name \*.orig`
+for FILE in $FIND; do
 	BASENAME=`basename $FILE`
 	USER="`echo "$BASENAME"| sed 's/.orig//'`"
 	mv -f $FILE /var/spool/cron/$USER >/dev/null 2>&1
 	chown $USER:crontab /var/spool/cron/$USER >/dev/null 2>&1
 	chmod 600 /var/spool/cron/$USER >/dev/null 2>&1
 done
-rm -rf /var/spool/cron/rm.*
-rm -rf /var/spool/cron/fcrontab.sig
+rm -f /var/spool/cron/rm\.*
+rm -f /var/spool/cron/fcrontab.sig
+rm -f /var/spool/cron/new\.*
 fi
 
 %postun
@@ -275,7 +257,7 @@ done
 %defattr(644,root,root,755)
 %doc  doc/HTML doc/olddoc/{FAQ,CHANGES,README,THANKS,TODO}
 %attr(0750,root,crontab) %dir %{_sysconfdir}/cron*
-%attr(0644,root,crontab) %config(noreplace) /etc/cron.d/crontab
+%attr(0640,root,crontab) %config(noreplace) /etc/cron.d/crontab
 %attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
 %attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
 %attr(0640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
@@ -289,14 +271,10 @@ done
 %attr(6111,crontab,crontab) %{_bindir}/crontab
 %attr(4711,root,root) %{_bindir}/fcronsighup
 %attr(6111,crontab,crontab) %{_bindir}/fcrondyn
-
-%{_mandir}/man*/*
-#%%lang(fi) %{_mandir}/fi/man*/*
-#%%lang(fr) %{_mandir}/fr/man*/*
-#%%lang(id) %{_mandir}/id/man*/*
-#%%lang(ja) %{_mandir}/ja/man*/*
-#%%lang(ko) %{_mandir}/ko/man*/*
-#%%lang(pl) %{_mandir}/pl/man*/*
-
+%{_mandir}/man1/fcrondyn.1.*
+%{_mandir}/man1/fcrontab.1.*
+%{_mandir}/man5/fcron.conf.5*
+%{_mandir}/man5/fcrontab.5*
+%{_mandir}/man8/fcron.8*
 %attr(1730,root,crontab) /var/spool/cron
 %attr(0660,root,crontab) %ghost /var/log/cron
