@@ -25,9 +25,12 @@ Requires:	/bin/run-parts
 Requires:	psmisc >= 20.1
 Provides:	crontabs >= 1.7
 Provides:	crondaemon
+Provides:	group(crontab)
 Obsoletes:	crontabs
 Obsoletes:	crondaemon
 Obsoletes:	hc-cron
+Obsoletes:	mcron
+Obsoletes:	vixie-cron
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -146,8 +149,7 @@ fi
 
 %postun
 if [ "$1" = "0" ]; then
-	echo "Removing group crontab."
-	/usr/sbin/groupdel crontab
+	%groupremove crontab
 fi
 
 %triggerpostun -- vixie-cron <= 3.0.1-85
