@@ -19,10 +19,12 @@ Patch0:		%{name}-mail_output_only_if_there_is_output.patch
 URL:		http://fcron.free.fr/
 BuildRequires:	libselinux-devel
 BuildRequires:	pam-devel
-BuildRequires:	rpmbuild(macros) >= 1.159
+BuildRequires:	rpmbuild(macros) >= 1.202
 PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
+Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/useradd
 Requires(post,preun):	/sbin/chkconfig
 Requires(post):	fileutils
 Requires(postun):	/usr/sbin/groupdel
@@ -125,24 +127,8 @@ EOF2
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -n "`/usr/bin/getgid crontab`" ]; then
-	if [ "`/usr/bin/getgid crontab`" != "117" ]; then
-		echo "Error: group crontab doesn't have gid=117. Correct this before installing cron." 1>&2
-		exit 1
-	fi
-else
-	echo "Adding group crontab GID=117."
-	/usr/sbin/groupadd -g 117 -r -f crontab
-fi
-
-if [ -n "`/bin/id -u crontab 2>/dev/null`" ]; then
-	if [ "`/bin/id -u crontab`" != "134" ]; then
-		echo "Error: user crontab doesn't have uid=134. Correct this before installing %{name}." 1>&2
-		exit 1
-	fi
-else
-        /usr/sbin/useradd -u 134 -r -d /var/spool/cron -s /bin/false -c "crontab User" -g crontab crontab 1>&2
-fi
+%groupadd -g 117 -r -f crontab
+%useradd -u 134 -r -d /var/spool/cron -s /bin/false -c "crontab User" -g crontab crontab
 
 %post
 if [ "$1" = "1" ]; then
