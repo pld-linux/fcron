@@ -13,21 +13,21 @@ Source3:	cron.sysconfig
 Source4:	%{name}.crontab
 Source5:	%{name}.pam
 Source6:	%{name}.conf
-Source7:	fcrontab.pam	
+Source7:	%{name}tab.pam
 Source8:	%{name}.systab
 Patch0:		%{name}-mail_output_only_if_there_is_output.patch
 URL:		http://fcron.free.fr/
 BuildRequires:	libselinux-devel
 BuildRequires:	pam-devel
 BuildRequires:	rpmbuild(macros) >= 1.202
-PreReq:		rc-scripts
-Requires(pre):	/usr/bin/getgid
+Requires:	rc-scripts
+Requires(post):	fileutils
+Requires(post,preun):	/sbin/chkconfig
+Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/bin/id
+Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(post,preun):	/sbin/chkconfig
-Requires(post):	fileutils
-Requires(postun):	/usr/sbin/groupdel
 Requires:	/bin/run-parts
 Requires:	psmisc >= 20.1
 Provides:	crontabs >= 1.7
@@ -106,7 +106,7 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/logrotate.d/cron
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/cron
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/cron.d/crontab
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/pam.d/fcron
-install %{SOURCE6} $RPM_BUILD_ROOT/etc/fcron.conf
+install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/fcron.conf
 install %{SOURCE7} $RPM_BUILD_ROOT/etc/pam.d/fcrontab
 install %{SOURCE8} $RPM_BUILD_ROOT/etc/cron.hourly/fcron.systab
 
@@ -246,18 +246,18 @@ done
 %files
 %defattr(644,root,root,755)
 %doc  doc/HTML doc/olddoc/{FAQ,CHANGES,README,THANKS,TODO}
-%attr(0750,root,crontab) %dir %{_sysconfdir}/cron*
-%attr(0750,root,root) %{_sysconfdir}/cron.hourly/%{name}.systab
-%attr(0640,root,crontab) %config(noreplace) /etc/cron.d/crontab
-%attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
-%attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
-%attr(0640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
-%attr(0644,root,crontab) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/fcron
-%attr(0644,root,crontab) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/fcrontab
-%attr(0754,root,root) /etc/rc.d/init.d/crond
-%config(noreplace) %verify(not md5 size mtime) %attr(640,root,root) /etc/logrotate.d/cron
-%attr(0640,root,crontab) %config(noreplace) /etc/fcron.conf
-%attr(0755,root,root) %{_sbindir}/crond
+%attr(750,root,crontab) %dir %{_sysconfdir}/cron*
+%attr(750,root,root) %{_sysconfdir}/cron.hourly/%{name}.systab
+%attr(640,root,crontab) %config(noreplace) /etc/cron.d/crontab
+%attr(640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
+%attr(640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
+%attr(644,root,crontab) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/fcron
+%attr(644,root,crontab) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/fcrontab
+%attr(754,root,root) /etc/rc.d/init.d/crond
+%config(noreplace) %verify(not md5 mtime size) %attr(640,root,root) /etc/logrotate.d/cron
+%attr(640,root,crontab) %config(noreplace) %{_sysconfdir}/fcron.conf
+%attr(755,root,root) %{_sbindir}/crond
 %attr(6111,crontab,crontab) %{_bindir}/fcrontab
 %attr(6111,crontab,crontab) %{_bindir}/crontab
 %attr(4711,root,root) %{_bindir}/fcronsighup
@@ -268,4 +268,4 @@ done
 %{_mandir}/man5/fcrontab.5*
 %{_mandir}/man8/fcron.8*
 %attr(1730,root,crontab) /var/spool/cron
-%attr(0660,root,crontab) %ghost /var/log/cron
+%attr(660,root,crontab) %ghost /var/log/cron
