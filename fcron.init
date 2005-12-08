@@ -24,7 +24,7 @@ case "$1" in
   start)
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/crond ]; then
-		msg_starting fcron 
+		msg_starting fcron
 		[ -f /var/spool/cron/systab.orig ] && rm -rf /var/spool/cron/systab.orig
 		FIND=`find /etc/cron.d/ \( -type f ! -name '*~' ! -name \*\.swp \
 		      ! -name \*\.rpmorig ! -name \*\.rpmnew ! -name \*\.rpmsave \)`
@@ -48,7 +48,7 @@ case "$1" in
 	else
 		msg_not_running fcron
 	fi
-																	
+
 	;;
   status)
 	status crond
