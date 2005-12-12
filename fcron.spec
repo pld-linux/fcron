@@ -20,7 +20,6 @@ URL:		http://fcron.free.fr/
 BuildRequires:	libselinux-devel
 BuildRequires:	pam-devel
 BuildRequires:	rpmbuild(macros) >= 1.202
-Requires:	rc-scripts
 Requires(post):	fileutils
 Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
@@ -30,6 +29,7 @@ Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires:	/bin/run-parts
 Requires:	psmisc >= 20.1
+Requires:	rc-scripts
 Provides:	crontabs >= 1.7
 Provides:	crondaemon
 Provides:	group(crontab)
