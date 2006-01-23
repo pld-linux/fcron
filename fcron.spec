@@ -64,6 +64,7 @@ uruchamianie go w zale¿no¶ci od obci±¿enia systemu i du¿o wiêcej.
 
 %build
 %configure \
+	--with-sendmail=/usr/sbin/sendmail \
 	--with-sysfcrontab=systab \
 	--with-spooldir=%{_var}/spool/cron \
 	--with-run-non-privileged=no \
