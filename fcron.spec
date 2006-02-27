@@ -18,11 +18,11 @@ Source8:	%{name}.systab
 Patch0:		%{name}-mail_output_only_if_there_is_output.patch
 Patch1:		%{name}-configure.patch
 URL:		http://fcron.free.fr/
-BuildRequires:	automake
 BuildRequires:	autoconf
+BuildRequires:	automake
 BuildRequires:	libselinux-devel
 BuildRequires:	pam-devel
-BuildRequires:	rpmbuild(macros) >= 1.202
+BuildRequires:	rpmbuild(macros) >= 1.268
 Requires(post):	fileutils
 Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
@@ -33,8 +33,8 @@ Requires(pre):	/usr/sbin/useradd
 Requires:	/bin/run-parts
 Requires:	psmisc >= 20.1
 Requires:	rc-scripts
-Provides:	crontabs >= 1.7
 Provides:	crondaemon
+Provides:	crontabs >= 1.7
 Provides:	group(crontab)
 Obsoletes:	crontabs
 Obsoletes:	hc-cron
@@ -103,7 +103,7 @@ install -d $RPM_BUILD_ROOT{/var/{log,spool/cron},%{_mandir}} \
 	GROUPNAME=$(id -g)
 
 #fix premission for rpmbuild
-chmod +rw $RPM_BUILD_ROOT/usr/*bin/*
+chmod +rw $RPM_BUILD_ROOT%{_prefix}/*bin/*
 
 ln -sf %{_bindir}/fcrontab $RPM_BUILD_ROOT%{_bindir}/crontab
 mv -f $RPM_BUILD_ROOT%{_sbindir}/fcron $RPM_BUILD_ROOT%{_sbindir}/crond
@@ -165,11 +165,7 @@ if [ "$1" = "2" ]; then
 fi
 
 /sbin/chkconfig --add crond
-if [ -f /var/lock/subsys/crond ]; then
-	/etc/rc.d/init.d/crond restart >&2
-else
-	echo "Run \"/etc/rc.d/init.d/crond start\" to start cron daemon."
-fi
+%service crond restart "cron daemon"
 
 umask 027
 touch /var/log/cron
@@ -178,24 +174,22 @@ chmod 660 /var/log/cron
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/crond ]; then
-		/etc/rc.d/init.d/crond stop >&2
-	fi
+	%service crond stop
 	/sbin/chkconfig --del crond
 
-rm -f /var/spool/cron/systab*
+	rm -f /var/spool/cron/systab*
 
-FIND=`find /var/spool/cron -name \*.orig`
-for FILE in $FIND; do
-	BASENAME=`basename $FILE`
-	USER="`echo "$BASENAME"| sed 's/.orig//'`"
-	mv -f $FILE /var/spool/cron/$USER >/dev/null 2>&1
-	chown $USER:crontab /var/spool/cron/$USER >/dev/null 2>&1
-	chmod 600 /var/spool/cron/$USER >/dev/null 2>&1
-done
-rm -f /var/spool/cron/rm\.*
-rm -f /var/spool/cron/fcrontab.sig
-rm -f /var/spool/cron/new\.*
+	FIND=`find /var/spool/cron -name '*.orig'`
+	for FILE in $FIND; do
+		BASENAME=`basename $FILE`
+		USER="${BASENAME%.orig}"
+		mv -f $FILE /var/spool/cron/$USER >/dev/null 2>&1
+		chown $USER:crontab /var/spool/cron/$USER >/dev/null 2>&1
+		chmod 600 /var/spool/cron/$USER >/dev/null 2>&1
+	done
+	rm -f /var/spool/cron/rm\.*
+	rm -f /var/spool/cron/fcrontab.sig
+	rm -f /var/spool/cron/new\.*
 fi
 
 %postun
@@ -241,8 +235,7 @@ fi
 /sbin/chkconfig --add crond
 
 %triggerpostun -- hc-cron <= 0.14-12
-for i in `/bin/ls /var/spool/cron 2>/dev/null`
-do
+for i in `/bin/ls /var/spool/cron 2>/dev/null`; do
 	chown ${i} /var/spool/cron/${i} 2>/dev/null || :
 done
 /bin/chmod 660 /var/log/cron
