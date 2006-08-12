@@ -120,14 +120,14 @@ install %{SOURCE8} $RPM_BUILD_ROOT/etc/cron.hourly/fcron.systab
 touch $RPM_BUILD_ROOT/var/log/cron
 
 cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.allow << EOF
-# cron.allow   This file describes the names of the users which are
-#               allowed to use the local cron daemon
+# cron.allow	This file describes the names of the users which are
+#		allowed to use the local cron daemon
 root
 EOF
 
 cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.deny << EOF2
-# cron.deny    This file describes the names of the users which are
-#               NOT allowed to use the local cron daemon
+# cron.deny	This file describes the names of the users which are
+#		NOT allowed to use the local cron daemon
 EOF2
 
 %clean
@@ -245,7 +245,7 @@ done
 
 %files
 %defattr(644,root,root,755)
-%doc  doc/HTML doc/olddoc/{FAQ,CHANGES,README,THANKS,TODO}
+%doc doc/HTML doc/olddoc/{FAQ,CHANGES,README,THANKS,TODO}
 %attr(750,root,crontab) %dir %{_sysconfdir}/cron*
 %attr(750,root,root) %{_sysconfdir}/cron.hourly/%{name}.systab
 %attr(640,root,crontab) %config(noreplace) /etc/cron.d/crontab
