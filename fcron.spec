@@ -262,8 +262,8 @@ done
 %attr(6111,crontab,crontab) %{_bindir}/crontab
 %attr(4711,root,root) %{_bindir}/fcronsighup
 %attr(6111,crontab,crontab) %{_bindir}/fcrondyn
-%{_mandir}/man1/fcrondyn.1.*
-%{_mandir}/man1/fcrontab.1.*
+%{_mandir}/man1/fcrondyn.1*
+%{_mandir}/man1/fcrontab.1*
 %{_mandir}/man5/fcron.conf.5*
 %{_mandir}/man5/fcrontab.5*
 %{_mandir}/man8/fcron.8*
