@@ -1,12 +1,12 @@
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl):	Serwer okresowego uruchamiania poleceñ zastêpuj±cy Vixie Crona
 Name:		fcron
-Version:	3.0.0
-Release:	4
+Version:	3.0.1
+Release:	1
 License:	GPL
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
-# Source0-md5:	55e92f8536c8b52c9b73b96a6a3e0fe3
+# Source0-md5:	8e5dcb3a646c11294294895954ef0a48
 Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
@@ -245,7 +245,7 @@ done
 
 %files
 %defattr(644,root,root,755)
-%doc doc/HTML doc/olddoc/{FAQ,CHANGES,README,THANKS,TODO}
+%doc doc/en/HTML doc/en/txt/{faq.txt,changes.txt,readme.txt,thanks.txt,todo.txt} 
 %attr(750,root,crontab) %dir %{_sysconfdir}/cron*
 %attr(750,root,root) %{_sysconfdir}/cron.hourly/%{name}.systab
 %attr(640,root,crontab) %config(noreplace) /etc/cron.d/crontab
@@ -256,6 +256,7 @@ done
 %attr(644,root,crontab) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/fcrontab
 %attr(754,root,root) /etc/rc.d/init.d/crond
 %config(noreplace) %verify(not md5 mtime size) %attr(640,root,root) /etc/logrotate.d/cron
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/fcron.*
 %attr(640,root,crontab) %config(noreplace) %{_sysconfdir}/fcron.conf
 %attr(755,root,root) %{_sbindir}/crond
 %attr(6111,crontab,crontab) %{_bindir}/fcrontab
@@ -264,8 +265,15 @@ done
 %attr(6111,crontab,crontab) %{_bindir}/fcrondyn
 %{_mandir}/man1/fcrondyn.1*
 %{_mandir}/man1/fcrontab.1*
+%{_mandir}/man3/bitstring.3*
 %{_mandir}/man5/fcron.conf.5*
 %{_mandir}/man5/fcrontab.5*
 %{_mandir}/man8/fcron.8*
+%lang(fr) %{_mandir}/fr/man1/fcrondyn.1*
+%lang(fr) %{_mandir}/fr/man1/fcrontab.1*
+%lang(fr) %{_mandir}/fr/man3/bitstring.3*
+%lang(fr) %{_mandir}/fr/man5/fcron.conf.5*
+%lang(fr) %{_mandir}/fr/man5/fcrontab.5*
+%lang(fr) %{_mandir}/fr/man8/fcron.8*
 %attr(1730,root,crontab) /var/spool/cron
 %attr(660,root,crontab) %ghost /var/log/cron
