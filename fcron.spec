@@ -1,12 +1,17 @@
+#
+# TODO: 
+# - if not vi editor installed, configure macro doesn't pass correctly. 
+#   We sholud run %%{configure} --with-editor=<default_editor_path>. Any ideas?
+#
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl):	Serwer okresowego uruchamiania poleceñ zastêpuj±cy Vixie Crona
 Name:		fcron
-Version:	3.0.1
+Version:	3.0.2
 Release:	1
 License:	GPL
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
-# Source0-md5:	8e5dcb3a646c11294294895954ef0a48
+# Source0-md5:	f35e6af41d356ebcb38882f86a14fb94
 Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
@@ -80,7 +85,8 @@ uruchamianie go w zale¿no¶ci od obci±¿enia systemu i du¿o wiêcej.
 	--with-groupname=crontab \
 	--with-pam=yes \
 	--with-selinux=yes \
-	--with-boot-install=no
+	--with-boot-install=no \
+#	--with-editor=/usr/bin/vim
 
 %{__make} OPTION="%{rpmcflags}"
 
