@@ -1,8 +1,3 @@
-#
-# TODO: 
-# - if not vi editor installed, configure macro doesn't pass correctly. 
-#   We sholud run %%{configure} --with-editor=<default_editor_path>. Any ideas?
-#
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl):	Serwer okresowego uruchamiania poleceñ zastêpuj±cy Vixie Crona
 Name:		fcron
@@ -23,6 +18,8 @@ Source8:	%{name}.systab
 Patch0:		%{name}-mail_output_only_if_there_is_output.patch
 Patch1:		%{name}-configure.patch
 URL:		http://fcron.free.fr/
+# configure tests -x (check can be removed, just like sendmail)
+BuildRequires:	/bin/vi
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libselinux-devel
@@ -86,9 +83,10 @@ uruchamianie go w zale¿no¶ci od obci±¿enia systemu i du¿o wiêcej.
 	--with-pam=yes \
 	--with-selinux=yes \
 	--with-boot-install=no \
-#	--with-editor=/usr/bin/vim
+	--with-editor=/bin/vi
 
-%{__make} OPTION="%{rpmcflags}"
+%{__make} \
+	OPTION="%{rpmcflags}"
 
 echo "#!/bin/sh" > script/user-group
 
