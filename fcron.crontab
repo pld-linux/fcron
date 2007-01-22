@@ -1,4 +1,4 @@
-#Any changes will be apply after restart crond
+# Any changes will be applied after crond restart
 # run-parts
 &nice(10),mailto(root) 01 * * * *	/bin/run-parts /etc/cron.hourly
 &nice(10),mailto(root) 02 5 * * *	/bin/run-parts /etc/cron.daily
