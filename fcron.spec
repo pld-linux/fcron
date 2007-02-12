@@ -1,5 +1,5 @@
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
-Summary(pl):	Serwer okresowego uruchamiania poleceñ zastêpuj±cy Vixie Crona
+Summary(pl.UTF-8):   Serwer okresowego uruchamiania poleceÅ„ zastÄ™pujÄ…cy Vixie Crona
 Name:		fcron
 Version:	3.0.2
 Release:	1
@@ -53,15 +53,15 @@ minutes of system up time or to do a job only once in a specified
 interval of time. You can also set a nice value to a job, run it
 depending on the system load average and much more !
 
-%description -l pl
-Fcron jest serwerem okresowego uruchamiania poleceñ maj±cym za cel
-zast±pienie Vixie Crona, posiadaj±cym zaimplementowane wiêkszo¶æ
-spo¶ród jego funkcji. Jednak¿e fcron nie zak³ada, ¿e system dzia³a
-ca³y czas, ani ¿e jest uruchamiany regularnie: mo¿na, na przyk³ad,
-kazaæ fcronowi uruchamiaæ zadanie co ka¿de x godzin y minut od
-uruchomienia systemu lub wykonywaæ zadanie dok³adnie raz w podanym
-okresie czasu. Umo¿liwia równie¿ ustawianie warto¶ci nice dla zadania,
-uruchamianie go w zale¿no¶ci od obci±¿enia systemu i du¿o wiêcej.
+%description -l pl.UTF-8
+Fcron jest serwerem okresowego uruchamiania poleceÅ„ majÄ…cym za cel
+zastÄ…pienie Vixie Crona, posiadajÄ…cym zaimplementowane wiÄ™kszoÅ›Ä‡
+spoÅ›rÃ³d jego funkcji. JednakÅ¼e fcron nie zakÅ‚ada, Å¼e system dziaÅ‚a
+caÅ‚y czas, ani Å¼e jest uruchamiany regularnie: moÅ¼na, na przykÅ‚ad,
+kazaÄ‡ fcronowi uruchamiaÄ‡ zadanie co kaÅ¼de x godzin y minut od
+uruchomienia systemu lub wykonywaÄ‡ zadanie dokÅ‚adnie raz w podanym
+okresie czasu. UmoÅ¼liwia rÃ³wnieÅ¼ ustawianie wartoÅ›ci nice dla zadania,
+uruchamianie go w zaleÅ¼noÅ›ci od obciÄ…Å¼enia systemu i duÅ¼o wiÄ™cej.
 
 %prep
 %setup -q
