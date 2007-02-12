@@ -1,5 +1,5 @@
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
-Summary(pl.UTF-8):   Serwer okresowego uruchamiania poleceń zastępujący Vixie Crona
+Summary(pl.UTF-8):	Serwer okresowego uruchamiania poleceń zastępujący Vixie Crona
 Name:		fcron
 Version:	3.0.2
 Release:	1
