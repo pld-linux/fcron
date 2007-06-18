@@ -3,7 +3,7 @@ Summary(pl.UTF-8):	Serwer okresowego uruchamiania poleceń zastępujący Vixie C
 Name:		fcron
 Version:	3.0.3
 Release:	1
-License:	GPL
+License:	GPL v2+
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
 # Source0-md5:	c85e6eecd0564f37658ae250a491fd31
