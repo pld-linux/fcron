@@ -1,12 +1,12 @@
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl.UTF-8):	Serwer okresowego uruchamiania poleceń zastępujący Vixie Crona
 Name:		fcron
-Version:	3.0.2
+Version:	3.0.3
 Release:	1
 License:	GPL
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
-# Source0-md5:	f35e6af41d356ebcb38882f86a14fb94
+# Source0-md5:	c85e6eecd0564f37658ae250a491fd31
 Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
@@ -17,6 +17,7 @@ Source7:	%{name}tab.pam
 Source8:	%{name}.systab
 Patch0:		%{name}-mail_output_only_if_there_is_output.patch
 Patch1:		%{name}-configure.patch
+Patch2:		%{name}-Makefile.patch
 URL:		http://fcron.free.fr/
 # configure tests -x (check can be removed, just like sendmail)
 BuildRequires:	/bin/vi
@@ -67,6 +68,7 @@ uruchamianie go w zależności od obciążenia systemu i dużo więcej.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__aclocal}
@@ -98,9 +100,6 @@ install -d $RPM_BUILD_ROOT{/var/{log,spool/cron},%{_mandir}} \
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
-	DESTSBIN=$RPM_BUILD_ROOT%{_sbindir} \
-	DESTBIN=$RPM_BUILD_ROOT%{_bindir} \
-	DESTMAN=$RPM_BUILD_ROOT%{_mandir} \
 	ROOTNAME=$(id -u) \
 	ROOTGROUP=$(id -g) \
 	USERNAME=$(id -u) \
