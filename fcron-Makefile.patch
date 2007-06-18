@@ -1,0 +1,11 @@
+--- fcron-3.0.3/Makefile.in~	2007-06-18 20:01:58.000000000 +0200
++++ fcron-3.0.3/Makefile.in	2007-06-18 20:01:53.000000000 +0200
+@@ -123,7 +123,7 @@
+ 	-DFCRON_EDITOR="\"${FCRON_EDITOR}\"" -DBINDIREX="\"${DESTBIN}\"" \
+ 	-c $<
+ 
+-install: install-staged strip perms
++install: install-staged strip
+ ifeq ($(BOOTINSTALL), 1)
+ 	$(SRCDIR)/script/boot-install "$(INSTALL) -o $(ROOTNAME)" $(DESTSBIN) $(DEBUG) $(FCRONTABS) $(ANSWERALL) $(SRCDIR)
+ endif
