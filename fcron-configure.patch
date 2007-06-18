@@ -1,17 +1,13 @@
-diff -urN fcron-3.0.0.org/configure.in fcron-3.0.0/configure.in
---- fcron-3.0.0.org/configure.in	2005-09-09 20:06:34.000000000 +0000
-+++ fcron-3.0.0/configure.in	2006-01-23 12:54:08.489340626 +0000
-@@ -154,13 +154,8 @@
+--- fcron-3.0.3/configure.in~	2007-06-03 23:24:08.000000000 +0200
++++ fcron-3.0.3/configure.in	2007-06-18 00:30:02.000000000 +0200
+@@ -199,10 +199,6 @@
      ;;
    *)
-     AC_MSG_CHECKING(sendmail)
--    if test -x "$withval"; then
-       AC_DEFINE_UNQUOTED(SENDMAIL, "$withval")
-       AC_MSG_RESULT($withval)
--    else
+     SENDMAIL=$withval
+-    if test $fcron_enable_checks = 'yes' -a ! -x "$withval"; then
 -      AC_MSG_ERROR([
 -File $withval is not an executable file])
 -    fi
      ;;
-   esac ], [
-   AC_PATH_PROG(SENDMAIL, sendmail, , $PATH:/usr/lib:/usr/sbin )
+   esac ]
+ )
