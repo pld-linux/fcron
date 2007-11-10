@@ -1,12 +1,14 @@
+# TODO:
+# - check -mail_output_only_if_there_is_output.patch. I'm not sure we need it in >= 3.0.4 version
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl.UTF-8):	Serwer okresowego uruchamiania poleceń zastępujący Vixie Crona
 Name:		fcron
-Version:	3.0.3
-Release:	2
+Version:	3.0.4
+Release:	1
 License:	GPL v2+
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
-# Source0-md5:	c85e6eecd0564f37658ae250a491fd31
+# Source0-md5:	5a26a1dfd91fdc7e87401e98aef870e6
 Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
@@ -66,7 +68,7 @@ uruchamianie go w zależności od obciążenia systemu i dużo więcej.
 
 %prep
 %setup -q
-%patch0 -p1
+#%%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 
