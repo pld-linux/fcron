@@ -98,7 +98,7 @@ install -d $RPM_BUILD_ROOT{/var/{log,spool/cron},%{_mandir}} \
 	$RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,sysconfig} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/{cron,cron.{d,hourly,daily,weekly,monthly},pam.d}
 
-%{__make} install \
+%{__make} install-staged \
 	DESTDIR=$RPM_BUILD_ROOT \
 	ROOTNAME=$(id -u) \
 	ROOTGROUP=$(id -g) \
