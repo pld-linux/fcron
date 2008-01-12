@@ -39,12 +39,10 @@ Requires:	/bin/run-parts
 Requires:	psmisc >= 20.1
 Requires:	rc-scripts
 Provides:	crondaemon
-Provides:	crontabs >= 1.7
+Provides:	crontabs = 1.7
 Provides:	group(crontab)
+Obsoletes:	crondaemon
 Obsoletes:	crontabs
-Obsoletes:	mcron
-Conflicts:	hc-cron
-Conflicts:	vixie-cron
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
