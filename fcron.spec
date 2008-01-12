@@ -17,9 +17,8 @@ Source5:	%{name}.pam
 Source6:	%{name}.conf
 Source7:	%{name}tab.pam
 Source8:	%{name}.systab
-Patch0:		%{name}-mail_output_only_if_there_is_output.patch
-Patch1:		%{name}-configure.patch
-Patch2:		%{name}-Makefile.patch
+Patch0:		%{name}-configure.patch
+Patch1:		%{name}-Makefile.patch
 URL:		http://fcron.free.fr/
 # configure tests -x (check can be removed, just like sendmail)
 BuildRequires:	/bin/vi
@@ -66,9 +65,8 @@ uruchamianie go w zależności od obciążenia systemu i dużo więcej.
 
 %prep
 %setup -q
-#%%patch0 -p1
+%patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 %{__aclocal}
