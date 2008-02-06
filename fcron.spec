@@ -1,12 +1,14 @@
+# TODO:
+# - check -mail_output_only_if_there_is_output.patch. I'm not sure we need it in >= 3.0.4 version
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
-Summary(pl):	Serwer okresowego uruchamiania poleceñ zastêpuj±cy Vixie Crona
+Summary(pl.UTF-8):	Serwer okresowego uruchamiania poleceÅ„ zastÄ™pujÄ…cy Vixie Crona
 Name:		fcron
-Version:	3.0.2
-Release:	1
-License:	GPL
+Version:	3.0.4
+Release:	2
+License:	GPL v2+
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
-# Source0-md5:	f35e6af41d356ebcb38882f86a14fb94
+# Source0-md5:	5a26a1dfd91fdc7e87401e98aef870e6
 Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
@@ -15,8 +17,8 @@ Source5:	%{name}.pam
 Source6:	%{name}.conf
 Source7:	%{name}tab.pam
 Source8:	%{name}.systab
-Patch0:		%{name}-mail_output_only_if_there_is_output.patch
-Patch1:		%{name}-configure.patch
+Patch0:		%{name}-configure.patch
+Patch1:		%{name}-Makefile.patch
 URL:		http://fcron.free.fr/
 # configure tests -x (check can be removed, just like sendmail)
 BuildRequires:	/bin/vi
@@ -36,12 +38,10 @@ Requires:	/bin/run-parts
 Requires:	psmisc >= 20.1
 Requires:	rc-scripts
 Provides:	crondaemon
-Provides:	crontabs >= 1.7
+Provides:	crontabs = 1.7
 Provides:	group(crontab)
+Obsoletes:	crondaemon
 Obsoletes:	crontabs
-Obsoletes:	hc-cron
-Obsoletes:	mcron
-Obsoletes:	vixie-cron
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -53,15 +53,15 @@ minutes of system up time or to do a job only once in a specified
 interval of time. You can also set a nice value to a job, run it
 depending on the system load average and much more !
 
-%description -l pl
-Fcron jest serwerem okresowego uruchamiania poleceñ maj±cym za cel
-zast±pienie Vixie Crona, posiadaj±cym zaimplementowane wiêkszo¶æ
-spo¶ród jego funkcji. Jednak¿e fcron nie zak³ada, ¿e system dzia³a
-ca³y czas, ani ¿e jest uruchamiany regularnie: mo¿na, na przyk³ad,
-kazaæ fcronowi uruchamiaæ zadanie co ka¿de x godzin y minut od
-uruchomienia systemu lub wykonywaæ zadanie dok³adnie raz w podanym
-okresie czasu. Umo¿liwia równie¿ ustawianie warto¶ci nice dla zadania,
-uruchamianie go w zale¿no¶ci od obci±¿enia systemu i du¿o wiêcej.
+%description -l pl.UTF-8
+Fcron jest serwerem okresowego uruchamiania poleceÅ„ majÄ…cym za cel
+zastÄ…pienie Vixie Crona, posiadajÄ…cym zaimplementowane wiÄ™kszoÅ›Ä‡
+spoÅ›rÃ³d jego funkcji. JednakÅ¼e fcron nie zakÅ‚ada, Å¼e system dziaÅ‚a
+caÅ‚y czas, ani Å¼e jest uruchamiany regularnie: moÅ¼na, na przykÅ‚ad,
+kazaÄ‡ fcronowi uruchamiaÄ‡ zadanie co kaÅ¼de x godzin y minut od
+uruchomienia systemu lub wykonywaÄ‡ zadanie dokÅ‚adnie raz w podanym
+okresie czasu. UmoÅ¼liwia rÃ³wnieÅ¼ ustawianie wartoÅ›ci nice dla zadania,
+uruchamianie go w zaleÅ¼noÅ›ci od obciÄ…Å¼enia systemu i duÅ¼o wiÄ™cej.
 
 %prep
 %setup -q
@@ -96,11 +96,8 @@ install -d $RPM_BUILD_ROOT{/var/{log,spool/cron},%{_mandir}} \
 	$RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,sysconfig} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/{cron,cron.{d,hourly,daily,weekly,monthly},pam.d}
 
-%{__make} install \
+%{__make} install-staged \
 	DESTDIR=$RPM_BUILD_ROOT \
-	DESTSBIN=$RPM_BUILD_ROOT%{_sbindir} \
-	DESTBIN=$RPM_BUILD_ROOT%{_bindir} \
-	DESTMAN=$RPM_BUILD_ROOT%{_mandir} \
 	ROOTNAME=$(id -u) \
 	ROOTGROUP=$(id -g) \
 	USERNAME=$(id -u) \
@@ -123,16 +120,16 @@ install %{SOURCE8} $RPM_BUILD_ROOT/etc/cron.hourly/fcron.systab
 
 touch $RPM_BUILD_ROOT/var/log/cron
 
-cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.allow << EOF
+cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.allow << 'EOF'
 # cron.allow	This file describes the names of the users which are
 #		allowed to use the local cron daemon
 root
 EOF
 
-cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.deny << EOF2
+cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.deny << 'EOF'
 # cron.deny	This file describes the names of the users which are
 #		NOT allowed to use the local cron daemon
-EOF2
+EOF
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -169,7 +166,7 @@ if [ "$1" = "2" ]; then
 fi
 
 /sbin/chkconfig --add crond
-%service crond restart "cron daemon"
+%service crond restart "Cron Daemon"
 
 umask 027
 touch /var/log/cron
@@ -191,9 +188,9 @@ if [ "$1" = "0" ]; then
 		chown $USER:crontab /var/spool/cron/$USER >/dev/null 2>&1
 		chmod 600 /var/spool/cron/$USER >/dev/null 2>&1
 	done
-	rm -f /var/spool/cron/rm\.*
+	rm -f /var/spool/cron/rm.*
 	rm -f /var/spool/cron/fcrontab.sig
-	rm -f /var/spool/cron/new\.*
+	rm -f /var/spool/cron/new.*
 fi
 
 %postun
@@ -202,54 +199,14 @@ if [ "$1" = "0" ]; then
 	%groupremove crontab
 fi
 
-%triggerpostun -- vixie-cron <= 3.0.1-85
-for i in `/bin/ls /var/spool/cron 2>/dev/null`
-do
-	chown ${i} /var/spool/cron/${i} 2>/dev/null || :
-done
-/bin/chmod 660 /var/log/cron
-/bin/chgrp crontab /var/log/cron
-/bin/chmod 640 /etc/cron/cron.*
-/bin/chgrp crontab /etc/cron/cron.*
-
-%triggerpostun -- vixie-cron <= 3.0.1-73
-if [ -f /etc/cron.d/cron.allow.rpmsave ]; then
-	mv -f /etc/cron.d/cron.allow.rpmsave /etc/cron/cron.allow
-fi
-if [ -f /etc/cron.d/cron.allow ]; then
-	mv -f /etc/cron.d/cron.allow /etc/cron/cron.allow
-fi
-if [ -f /etc/cron.d/cron.deny.rpmsave ]; then
-	mv -f /etc/cron.d/cron.deny.rpmsave /etc/cron/cron.deny
-fi
-if [ -f /etc/cron.d/cron.deny ]; then
-	mv -f /etc/cron.d/cron.deny /etc/cron/cron.deny
-fi
-
-%triggerpostun -- vixie-cron <= 3.0.1-70
-if [ -f /etc/cron.allow ]; then
-	mv -f /etc/cron.allow /etc/cron/cron.allow
-fi
-if [ -f /etc/cron.deny ]; then
-	mv -f /etc/cron.deny /etc/cron/cron.deny
-fi
-
 %triggerpostun -- hc-cron
+# reinstall crond init.d links, which could be different
 /sbin/chkconfig --del crond
 /sbin/chkconfig --add crond
 
-%triggerpostun -- hc-cron <= 0.14-12
-for i in `/bin/ls /var/spool/cron 2>/dev/null`; do
-	chown ${i} /var/spool/cron/${i} 2>/dev/null || :
-done
-/bin/chmod 660 /var/log/cron
-/bin/chgrp crontab /var/log/cron
-/bin/chmod 640 /etc/cron/cron.*
-/bin/chgrp crontab /etc/cron/cron.*
-
 %files
 %defattr(644,root,root,755)
-%doc doc/en/HTML doc/en/txt/{faq.txt,changes.txt,readme.txt,thanks.txt,todo.txt} 
+%doc doc/en/HTML doc/en/txt/{faq.txt,changes.txt,readme.txt,thanks.txt,todo.txt}
 %attr(750,root,crontab) %dir %{_sysconfdir}/cron*
 %attr(750,root,root) %{_sysconfdir}/cron.hourly/%{name}.systab
 %attr(640,root,crontab) %config(noreplace) /etc/cron.d/crontab
