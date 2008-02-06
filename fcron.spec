@@ -4,7 +4,7 @@ Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl.UTF-8):	Serwer okresowego uruchamiania poleceń zastępujący Vixie Crona
 Name:		fcron
 Version:	3.0.4
-Release:	1
+Release:	2
 License:	GPL v2+
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
@@ -120,16 +120,16 @@ install %{SOURCE8} $RPM_BUILD_ROOT/etc/cron.hourly/fcron.systab
 
 touch $RPM_BUILD_ROOT/var/log/cron
 
-cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.allow << EOF
+cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.allow << 'EOF'
 # cron.allow	This file describes the names of the users which are
 #		allowed to use the local cron daemon
 root
 EOF
 
-cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.deny << EOF2
+cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.deny << 'EOF'
 # cron.deny	This file describes the names of the users which are
 #		NOT allowed to use the local cron daemon
-EOF2
+EOF
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -166,7 +166,7 @@ if [ "$1" = "2" ]; then
 fi
 
 /sbin/chkconfig --add crond
-%service crond restart "cron daemon"
+%service crond restart "Cron Daemon"
 
 umask 027
 touch /var/log/cron
@@ -188,9 +188,9 @@ if [ "$1" = "0" ]; then
 		chown $USER:crontab /var/spool/cron/$USER >/dev/null 2>&1
 		chmod 600 /var/spool/cron/$USER >/dev/null 2>&1
 	done
-	rm -f /var/spool/cron/rm\.*
+	rm -f /var/spool/cron/rm.*
 	rm -f /var/spool/cron/fcrontab.sig
-	rm -f /var/spool/cron/new\.*
+	rm -f /var/spool/cron/new.*
 fi
 
 %postun
@@ -199,54 +199,14 @@ if [ "$1" = "0" ]; then
 	%groupremove crontab
 fi
 
-%triggerpostun -- vixie-cron <= 3.0.1-85
-for i in `/bin/ls /var/spool/cron 2>/dev/null`
-do
-	chown ${i} /var/spool/cron/${i} 2>/dev/null || :
-done
-/bin/chmod 660 /var/log/cron
-/bin/chgrp crontab /var/log/cron
-/bin/chmod 640 /etc/cron/cron.*
-/bin/chgrp crontab /etc/cron/cron.*
-
-%triggerpostun -- vixie-cron <= 3.0.1-73
-if [ -f /etc/cron.d/cron.allow.rpmsave ]; then
-	mv -f /etc/cron.d/cron.allow.rpmsave /etc/cron/cron.allow
-fi
-if [ -f /etc/cron.d/cron.allow ]; then
-	mv -f /etc/cron.d/cron.allow /etc/cron/cron.allow
-fi
-if [ -f /etc/cron.d/cron.deny.rpmsave ]; then
-	mv -f /etc/cron.d/cron.deny.rpmsave /etc/cron/cron.deny
-fi
-if [ -f /etc/cron.d/cron.deny ]; then
-	mv -f /etc/cron.d/cron.deny /etc/cron/cron.deny
-fi
-
-%triggerpostun -- vixie-cron <= 3.0.1-70
-if [ -f /etc/cron.allow ]; then
-	mv -f /etc/cron.allow /etc/cron/cron.allow
-fi
-if [ -f /etc/cron.deny ]; then
-	mv -f /etc/cron.deny /etc/cron/cron.deny
-fi
-
 %triggerpostun -- hc-cron
+# reinstall crond init.d links, which could be different
 /sbin/chkconfig --del crond
 /sbin/chkconfig --add crond
 
-%triggerpostun -- hc-cron <= 0.14-12
-for i in `/bin/ls /var/spool/cron 2>/dev/null`; do
-	chown ${i} /var/spool/cron/${i} 2>/dev/null || :
-done
-/bin/chmod 660 /var/log/cron
-/bin/chgrp crontab /var/log/cron
-/bin/chmod 640 /etc/cron/cron.*
-/bin/chgrp crontab /etc/cron/cron.*
-
 %files
 %defattr(644,root,root,755)
-%doc doc/en/HTML doc/en/txt/{faq.txt,changes.txt,readme.txt,thanks.txt,todo.txt} 
+%doc doc/en/HTML doc/en/txt/{faq.txt,changes.txt,readme.txt,thanks.txt,todo.txt}
 %attr(750,root,crontab) %dir %{_sysconfdir}/cron*
 %attr(750,root,root) %{_sysconfdir}/cron.hourly/%{name}.systab
 %attr(640,root,crontab) %config(noreplace) /etc/cron.d/crontab
