@@ -1,5 +1,3 @@
-# TODO:
-# - check -mail_output_only_if_there_is_output.patch. I'm not sure we need it in >= 3.0.4 version
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl.UTF-8):	Serwer okresowego uruchamiania poleceń zastępujący Vixie Crona
 Name:		fcron
