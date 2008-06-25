@@ -1,0 +1,15 @@
+--- subs.c.orig	2007-01-15 22:41:06.000000000 +0100
++++ subs.c	2007-02-07 10:45:31.000000000 +0100
+@@ -222,10 +222,9 @@
+     /* check if the file is secure : owner:root, group:fcron,
+      * writable only by owner */
+     if ( fstat(fileno(f), &st) != 0 
+-	 || st.st_uid != rootuid || st.st_gid != fcrongid
+ 	 || st.st_mode & S_IWGRP || st.st_mode & S_IWOTH ) {
+-	error("Conf file (%s) must be owned by root:" GROUPNAME 
+-	      " and (no more than) 644 : ignored", fcronconf, GROUPNAME);
++	error("Conf file (%s) must not have more perms than 644 : ignored", 
++		fcronconf);
+ 	fclose(f);
+ 	return;
+     }
