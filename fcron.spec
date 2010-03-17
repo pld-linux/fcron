@@ -199,7 +199,8 @@ if [ "$1" = "0" ]; then
 	%groupremove crontab
 fi
 
-%triggerpostun -- hc-cron1# reinstall crond init.d links, which could be different
+%triggerpostun -- hc-cron
+# reinstall crond init.d links, which could be different
 /sbin/chkconfig --del crond
 /sbin/chkconfig --add crond
 
