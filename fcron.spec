@@ -1,12 +1,12 @@
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl.UTF-8):	Serwer okresowego uruchamiania poleceń zastępujący Vixie Crona
 Name:		fcron
-Version:	3.0.4
-Release:	3
+Version:	3.0.5
+Release:	1
 License:	GPL v2+
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
-# Source0-md5:	5a26a1dfd91fdc7e87401e98aef870e6
+# Source0-md5:	4f3bb6bccc7333ecd7c9994c3598e994
 Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
@@ -20,7 +20,7 @@ Patch1:		%{name}-Makefile.patch
 Patch2:		%{name}-accept_readable_fcron.conf.patch
 URL:		http://fcron.free.fr/
 # configure tests -x (check can be removed, just like sendmail)
-BuildRequires:	/bin/vi
+BuildRequires:	/usr/bin/vim
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libselinux-devel
@@ -83,7 +83,7 @@ uruchamianie go w zależności od obciążenia systemu i dużo więcej.
 	--with-pam=yes \
 	--with-selinux=yes \
 	--with-boot-install=no \
-	--with-editor=/bin/vi
+	--with-editor=/usr/bin/vim
 
 %{__make} \
 	OPTION="%{rpmcflags}"
@@ -199,8 +199,7 @@ if [ "$1" = "0" ]; then
 	%groupremove crontab
 fi
 
-%triggerpostun -- hc-cron
-# reinstall crond init.d links, which could be different
+%triggerpostun -- hc-cron1# reinstall crond init.d links, which could be different
 /sbin/chkconfig --del crond
 /sbin/chkconfig --add crond
 
