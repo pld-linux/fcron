@@ -2,7 +2,7 @@ Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl.UTF-8):	Serwer okresowego uruchamiania poleceń zastępujący Vixie Crona
 Name:		fcron
 Version:	3.0.5
-Release:	1
+Release:	2
 License:	GPL v2+
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
@@ -20,7 +20,7 @@ Patch1:		%{name}-Makefile.patch
 Patch2:		%{name}-accept_readable_fcron.conf.patch
 URL:		http://fcron.free.fr/
 # configure tests -x (check can be removed, just like sendmail)
-BuildRequires:	/usr/bin/vim
+BuildRequires:	/bin/vi
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libselinux-devel
@@ -83,7 +83,7 @@ uruchamianie go w zależności od obciążenia systemu i dużo więcej.
 	--with-pam=yes \
 	--with-selinux=yes \
 	--with-boot-install=no \
-	--with-editor=/usr/bin/vim
+	--with-editor=/bin/vi
 
 %{__make} \
 	OPTION="%{rpmcflags}"
