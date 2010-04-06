@@ -1,12 +1,12 @@
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl.UTF-8):	Serwer okresowego uruchamiania poleceń zastępujący Vixie Crona
 Name:		fcron
-Version:	3.0.5
-Release:	2
+Version:	3.0.6
+Release:	1
 License:	GPL v2+
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
-# Source0-md5:	4f3bb6bccc7333ecd7c9994c3598e994
+# Source0-md5:	69ebcb41921e2a282f41ebecb3a27053
 Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
