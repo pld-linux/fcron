@@ -2,7 +2,7 @@ Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl.UTF-8):	Serwer okresowego uruchamiania poleceń zastępujący Vixie Crona
 Name:		fcron
 Version:	3.0.6
-Release:	1
+Release:	2
 License:	GPL v2+
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
@@ -116,7 +116,7 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/cron.d/crontab
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/pam.d/fcron
 install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/fcron.conf
 install %{SOURCE7} $RPM_BUILD_ROOT/etc/pam.d/fcrontab
-install %{SOURCE8} $RPM_BUILD_ROOT/etc/cron.hourly/fcron.systab
+install %{SOURCE8} $RPM_BUILD_ROOT/etc/cron.hourly/fcron
 
 touch $RPM_BUILD_ROOT/var/log/cron
 
@@ -208,7 +208,7 @@ fi
 %defattr(644,root,root,755)
 %doc doc/en/HTML doc/en/txt/{faq.txt,changes.txt,readme.txt,thanks.txt,todo.txt}
 %attr(750,root,crontab) %dir %{_sysconfdir}/cron*
-%attr(750,root,root) %{_sysconfdir}/cron.hourly/%{name}.systab
+%attr(750,root,root) %{_sysconfdir}/cron.hourly/%{name}
 %attr(640,root,crontab) %config(noreplace) /etc/cron.d/crontab
 %attr(640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
 %attr(640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
