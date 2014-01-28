@@ -1,0 +1,18 @@
+--- fcron-3.1.2/configure.in~	2013-03-03 20:58:38.000000000 +0100
++++ fcron-3.1.2/configure.in	2014-01-29 00:18:37.531302060 +0100
+@@ -198,14 +198,7 @@
+   AC_MSG_WARN([Without sendmail you will not get the output of the jobs by mail])
+ elif test -n "$SENDMAIL" ; then
+   dnl The user defined a sendmail program to use:
+-  if test ! -x "$SENDMAIL" ; then
+-    dnl ... but it is not an executable file!
+-    AC_MSG_RESULT([$SENDMAIL])
+-    AC_MSG_ERROR([File $SENDMAIL is not an executable file])
+-  else
+-    dnl ... and it is valid
+-    AC_MSG_RESULT([$SENDMAIL])
+-  fi
++  AC_MSG_RESULT([$SENDMAIL])
+ elif test -z "$FOUND_SENDMAIL" ; then
+   dnl The user didn't defined a program to use, and we didn't find one automatically
+   AC_MSG_RESULT([not found])
