@@ -1,12 +1,12 @@
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl.UTF-8):	Serwer okresowego uruchamiania poleceń zastępujący Vixie Crona
 Name:		fcron
-Version:	3.0.6
-Release:	3
+Version:	3.1.2
+Release:	1
 License:	GPL v2+
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
-# Source0-md5:	69ebcb41921e2a282f41ebecb3a27053
+# Source0-md5:	36bf213e15f3a480f2274f8e46cced0a
 Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
@@ -15,7 +15,6 @@ Source5:	%{name}.pam
 Source6:	%{name}.conf
 Source7:	%{name}tab.pam
 Source8:	%{name}.systab
-Patch0:		%{name}-configure.patch
 Patch1:		%{name}-Makefile.patch
 Patch2:		%{name}-accept_readable_fcron.conf.patch
 URL:		http://fcron.free.fr/
@@ -64,7 +63,6 @@ uruchamianie go w zależności od obciążenia systemu i dużo więcej.
 
 %prep
 %setup -q
-%patch0 -p1
 %patch1 -p1
 %patch2 -p0
 
@@ -130,6 +128,8 @@ cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.deny << 'EOF'
 # cron.deny	This file describes the names of the users which are
 #		NOT allowed to use the local cron daemon
 EOF
+
+%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -217,8 +217,9 @@ fi
 %attr(644,root,crontab) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/fcrontab
 %attr(754,root,root) /etc/rc.d/init.d/crond
 %config(noreplace) %verify(not md5 mtime size) %attr(640,root,root) /etc/logrotate.d/cron
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/fcron.*
-%attr(640,root,crontab) %config(noreplace) %{_sysconfdir}/fcron.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/fcron.allow
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/fcron.deny
+%attr(640,root,crontab) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/fcron.conf
 %attr(755,root,root) %{_sbindir}/crond
 %attr(6111,crontab,crontab) %{_bindir}/fcrontab
 %attr(6111,crontab,crontab) %{_bindir}/crontab

@@ -4,7 +4,7 @@
  	-DFCRON_EDITOR="\"${FCRON_EDITOR}\"" -DBINDIREX="\"${DESTBIN}\"" \
  	-c $<
  
--install: install-staged strip perms
+-install: install-staged strip perms 
 +install: install-staged strip
  ifeq ($(BOOTINSTALL), 1)
  	$(SRCDIR)/script/boot-install "$(INSTALL) -o $(ROOTNAME)" $(DESTSBIN) $(DEBUG) $(FCRONTABS) $(ANSWERALL) $(SRCDIR)
