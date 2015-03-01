@@ -1,8 +1,10 @@
+# TODO
+# - use libbsd-devel? (bitstring at least?)
 Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl.UTF-8):	Serwer okresowego uruchamiania poleceń zastępujący Vixie Crona
 Name:		fcron
 Version:	3.1.2
-Release:	2
+Release:	3
 License:	GPL v2+
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
@@ -133,6 +135,9 @@ EOF
 
 %{__rm} -r $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
 
+# conflicts with libbsd-devel-0.7.0-2.x86_64
+%{__rm} $RPM_BUILD_ROOT/usr/share/man/man3/bitstring.3*
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -229,13 +234,11 @@ fi
 %attr(6111,crontab,crontab) %{_bindir}/fcrondyn
 %{_mandir}/man1/fcrondyn.1*
 %{_mandir}/man1/fcrontab.1*
-%{_mandir}/man3/bitstring.3*
 %{_mandir}/man5/fcron.conf.5*
 %{_mandir}/man5/fcrontab.5*
 %{_mandir}/man8/fcron.8*
 %lang(fr) %{_mandir}/fr/man1/fcrondyn.1*
 %lang(fr) %{_mandir}/fr/man1/fcrontab.1*
-%lang(fr) %{_mandir}/fr/man3/bitstring.3*
 %lang(fr) %{_mandir}/fr/man5/fcron.conf.5*
 %lang(fr) %{_mandir}/fr/man5/fcrontab.5*
 %lang(fr) %{_mandir}/fr/man8/fcron.8*
