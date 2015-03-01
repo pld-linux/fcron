@@ -206,7 +206,13 @@ if [ "$1" = "0" ]; then
 	%groupremove crontab
 fi
 
-%triggerpostun -- hc-cron
+%triggerun -- hc-cron,vixie-cron,cronie
+# Prevent preun from crond from working
+chmod a-x /etc/rc.d/init.d/crond
+
+%triggerpostun -- hc-cron,vixie-cron,cronie
+# Restore what triggerun removed
+chmod 754 /etc/rc.d/init.d/crond
 # reinstall crond init.d links, which could be different
 /sbin/chkconfig --del crond
 /sbin/chkconfig --add crond
