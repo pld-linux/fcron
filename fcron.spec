@@ -4,13 +4,12 @@ Summary:	A periodical command scheduler which aims at replacing Vixie Cron
 Summary(pl.UTF-8):	Serwer okresowego uruchamiania poleceń zastępujący Vixie Crona
 Name:		fcron
 Version:	3.1.2
-Release:	3
+Release:	4
 License:	GPL v2+
 Group:		Daemons
 Source0:	http://fcron.free.fr/archives/%{name}-%{version}.src.tar.gz
 # Source0-md5:	36bf213e15f3a480f2274f8e46cced0a
 Source1:	%{name}.init
-Source2:	cron.logrotate
 Source3:	cron.sysconfig
 Source4:	%{name}.crontab
 Source5:	%{name}.pam
@@ -112,15 +111,12 @@ ln -sf %{_bindir}/fcrontab $RPM_BUILD_ROOT%{_bindir}/crontab
 mv -f $RPM_BUILD_ROOT%{_sbindir}/fcron $RPM_BUILD_ROOT%{_sbindir}/crond
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/crond
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/logrotate.d/cron
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/cron
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/cron.d/crontab
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/pam.d/fcron
 install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/fcron.conf
 install %{SOURCE7} $RPM_BUILD_ROOT/etc/pam.d/fcrontab
 install %{SOURCE8} $RPM_BUILD_ROOT/etc/cron.hourly/fcron.systab
-
-touch $RPM_BUILD_ROOT/var/log/cron
 
 cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.allow << 'EOF'
 # cron.allow	This file describes the names of the users which are
@@ -175,11 +171,6 @@ fi
 /sbin/chkconfig --add crond
 %service crond restart "Cron Daemon"
 
-umask 027
-touch /var/log/cron
-chgrp crontab /var/log/cron
-chmod 660 /var/log/cron
-
 %preun
 if [ "$1" = "0" ]; then
 	%service crond stop
@@ -229,7 +220,6 @@ chmod 754 /etc/rc.d/init.d/crond
 %attr(644,root,crontab) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/fcron
 %attr(644,root,crontab) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/fcrontab
 %attr(754,root,root) /etc/rc.d/init.d/crond
-%config(noreplace) %verify(not md5 mtime size) %attr(640,root,root) /etc/logrotate.d/cron
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/fcron.allow
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/fcron.deny
 %attr(640,root,crontab) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/fcron.conf
@@ -249,4 +239,3 @@ chmod 754 /etc/rc.d/init.d/crond
 %lang(fr) %{_mandir}/fr/man5/fcrontab.5*
 %lang(fr) %{_mandir}/fr/man8/fcron.8*
 %attr(1730,root,crontab) /var/spool/cron
-%attr(660,root,crontab) %ghost /var/log/cron
